@@ -10,6 +10,7 @@ public class Main {
         System.out.println("1 - Modo Normal");
         System.out.println("2 - Modo Machine");
         System.out.println("3 - Modo Dual Mission");
+        System.out.println("4 - Modo Survival Bots");
         System.out.print("Digite sua escolha: ");
         escolhaModoJogo = scanner.nextInt();
 
@@ -27,6 +28,11 @@ public class Main {
             case 3: 
                 MainDualMission jogoDualMission = new MainDualMission();
                 jogoDualMission.executarJogo(scanner);
+                break;
+            
+            case 4:
+                MainSurvivalBots jogoSurvivalBots = new MainSurvivalBots();
+                jogoSurvivalBots.executarJogo(scanner);
                 break;
         }
 

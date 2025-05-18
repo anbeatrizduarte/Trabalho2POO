@@ -1,19 +1,48 @@
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Robo {
     private int x;
     private int y;
     private String cor;
     private Random random;
+    private boolean roboParalisado = false;
+    protected List<int[]> posicoesHistorico;
 
     protected Robo(String cor) {
         this.x = 0;
         this.y = 0;
         this.cor = cor;
         this.random = new Random();
+        this.posicoesHistorico = new ArrayList<>();
+    }
+
+    public void explodir() {
+        System.out.println("Robô " + cor + " explodiu e foi desativado!");
+        roboParalisado = true;
+    }
+
+    public void voltarPosicaoAnterior() {
+        if (posicoesHistorico.size() > 1) {
+            posicoesHistorico.remove(posicoesHistorico.size() - 1);
+            int[] posAnterior = posicoesHistorico.get(posicoesHistorico.size() - 1);
+            this.x = posAnterior[0];
+            this.y = posAnterior[1];
+            System.out.println("Robô " + cor + " voltou para a posição (" + x + ", " + y + ")");
+        }
+    }
+
+    protected void salvarPosicaoAtual() {
+        posicoesHistorico.add(new int[]{x, y});
     }
 
     protected void mover(String sentido) throws MovimentoInvalidoException {
+        if (roboParalisado) {
+            System.out.print("O robô foi explodido!");
+            return;
+        }
+        int novoX = x, novoY = y;
         switch (sentido.toLowerCase()) {
             case "up":
                 y++;
@@ -36,10 +65,17 @@ public class Robo {
                     "Movimento inválido! A posição do robô não pode ser negativa. Tentativa: (" + x + ", " + y + ")");
         }
 
+        salvarPosicaoAtual();
+        x = novoX;
+        y = novoY;
         System.out.println(this);
     }
 
     protected void mover(int sentido) throws MovimentoInvalidoException {
+        if (roboParalisado) {
+            System.out.print("O robô foi explodido!");
+            return;
+        }
         int novoX = x, novoY = y;
 
         switch (sentido) {
@@ -61,16 +97,21 @@ public class Robo {
 
         if (novoX < 0 || novoY < 0 || novoX > 4 || novoY > 4) {
             throw new MovimentoInvalidoException(
-                    "Movimento inválido do! Posição resultante (" + novoX + ", " + novoY + ") fora do tabuleiro.");
+                    "Movimento inválido! Posição resultante (" + novoX + ", " + novoY + ") fora do tabuleiro.");
         }
 
+        salvarPosicaoAtual();
         x = novoX;
         y = novoY;
         System.out.println(this);
     }
 
-    protected void moverIA() {
+    protected void moverIA() throws MovimentoInvalidoException {
         while (true) {
+            if (roboParalisado) {
+                System.out.print("O robô foi explodido!");
+                return;
+            }
             int sentido = random.nextInt(4) + 1; // 1 a 4
 
             try {

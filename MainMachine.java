@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class MainMachine extends BaseJogo{
+public class MainMachine extends BaseJogo {
 
     public MainMachine() {
         super();
@@ -23,12 +23,15 @@ public class MainMachine extends BaseJogo{
         boolean robo1Achou = false;
         boolean robo2Achou = false;
 
-
-        while(!(robo1Achou || robo2Achou)) {
+        while (!(robo1Achou || robo2Achou)) {
             for (int i = 0; i < robos.size(); i++) {
                 Robo robo = robos.get(i);
                 if (!encontrouAlimento(robo)) {
-                    robo.moverIA();
+                    try {
+                        robo.moverIA();
+                    } catch (MovimentoInvalidoException e) {
+                        System.out.println("Erro de movimentação: " + e.getMessage());
+                    }
                 }
             }
 
